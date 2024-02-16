@@ -1,11 +1,98 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Header from "./Header";
+import {checkValidateDataForSignin , checkValidateDataForSignup,} from "../utils/Validate";
+import {signInWithEmailAndPassword, createUserWithEmailAndPassword} from "firebase/auth";
+import { auth } from '../utils/firebase'; 
+import { useNavigate } from 'react-router-dom';
 // rafce
 const Login = () => {
-  const [isSignInForm,setSignInForm] = useState(true);
+  const navigate = useNavigate();
+  const [isSignInForm, setSignInForm] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const name = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
+
+  const handleButtonClick = () => {
+    // validate the form data
+    const emailValue = email.current.value;
+    const passwordValue = password.current.value;
+    const nameValue = name.current ? name.current.value : null;
+
+    const validationErrorMessage = isSignInForm
+      ? checkValidateDataForSignin(emailValue, passwordValue)
+      : checkValidateDataForSignup(nameValue, emailValue, passwordValue);
+
+    /*  if (name.current == null) {
+      const message = checkValidateDataForSignin(emailValue, passwordValue);
+      setErrorMessage(message);
+    }
+    else {
+      const message01 = checkValidateDataForSignup(name.current.value, email.current.value, password.current.value);
+      setErrorMessage(message01);
+    } 
+  */
+    if (validationErrorMessage) {
+      setErrorMessage(validationErrorMessage);
+      return;
+    }
+
+    // Firebase authentication logic
+    if (isSignInForm) {
+      signInWithEmailAndPassword(auth, emailValue, passwordValue)
+        .then((userCredential) => {
+          // Signed in successfully
+          const user = userCredential.user;
+          // Proceed with further actions after sign-in
+          navigate("/browse");
+        })
+        .catch((error) => {
+          // Handle errors here
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // Display error message to the user
+          if (errorCode === "auth/user-not-found") {
+            setErrorMessage("Incorrect Password")
+          }
+          else {
+            setErrorMessage(errorMessage);
+          }
+        });
+    } else {
+      createUserWithEmailAndPassword(auth, emailValue, passwordValue)
+        .then((userCredential) => {
+          // Signed up successfully
+          const user = userCredential.user;
+          // Proceed with further actions after sign-in
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // Display error message to the user
+          if (errorCode === "auth/email-already-in-use") {
+            setErrorMessage("Email is already in Use");
+          } else {
+            setErrorMessage(errorMessage);
+          }
+        });
+    }
+  };
+
+  // Handle changes in the email input field
+    const handleEmailChange = () => {
+  // Reset error message when user starts typing in the email field
+    setErrorMessage(null);
+  };
+
+  const handlePasswordChange = () => {
+    setErrorMessage(null);
+  }
+
+  // Toggle between sign-in and sign-up forms
   const ToggleSignIn = () => {
     setSignInForm(!isSignInForm);
-  }
+  };
   return (
     <div>
       <Header />
@@ -15,12 +102,16 @@ const Login = () => {
           alt="logo"
         />
       </div>
-      <form className="absolute w-3/12 bg-black my-36 mx-auto left-0 right-0 p-8 text-white rounded-lg bg-opacity-80">
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="absolute w-3/12 bg-black my-36 mx-auto left-0 right-0 p-8 text-white rounded-lg bg-opacity-80"
+      >
         <h1 className="text-3xl font-bold py-4">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
         {!isSignInForm && (
           <input
+            ref={name}
             type="text"
             placeholder="Enter Name"
             className="p-4 my-4 w-full bg-gray-700"
@@ -28,22 +119,37 @@ const Login = () => {
         )}
 
         <input
+          ref={email}
           type="text"
           placeholder="Email Address"
           className="p-4 my-4 w-full bg-gray-700"
+          onChange={handleEmailChange}
         />
         <input
+          ref={password}
           type="email"
           placeholder="Password"
           className="p-4 my-4 w-full bg-gray-700"
+          onChange={handlePasswordChange}
         />
-        <button className="p-4 my-6 w-full rounded-lg bg-red-700">
+        <p className="text-red-500 font-bold text-lg py-2">{errorMessage}</p>
+        <button
+          onClick={handleButtonClick}
+          className="p-4 my-6 w-full rounded-lg bg-red-700"
+        >
           {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
         <p className="py-2 cursor-pointer" onClick={ToggleSignIn}>
-          {isSignInForm
-            ? "New to Netflix? Sign Up Now"
-            : "Already Registered? Sign In Now"}
+          {isSignInForm ? (
+            <>
+              New to Netflix? <span className="text-blue-500">Sign Up Now</span>
+            </>
+          ) : (
+            <>
+              Already Registered?{" "}
+              <span className="text-blue-500">Sign In Now</span>
+            </>
+          )}
         </p>
       </form>
     </div>
