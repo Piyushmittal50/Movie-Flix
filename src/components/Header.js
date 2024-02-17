@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { useNavigate,useLocation} from 'react-router-dom';
 import { auth } from '../utils/firebase';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
   
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useSelector(store => store.user);
   const [showDropdown, setShowDropdown] = useState(false);
 
     const toggleDropdown = () => {
@@ -27,7 +29,7 @@ const Header = () => {
   };
 
   const renderUserIcon = () => {
-    if (location.pathname === '/browse') {
+    if (user  && location.pathname === '/browse') {
       return (
         <button className="flex items-center" onClick={toggleDropdown}>
           <img className="w-12 py-3 mr-5" src={user_icon} alt="user-icon" />

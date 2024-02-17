@@ -1,4 +1,5 @@
-import { createBrowserRouter,RouterProvider } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import Login from "./Login";
 import Browse from "./Browse";
 import { useDispatch} from "react-redux";
@@ -23,8 +24,8 @@ const Body = () => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 // for sign in / sign up
-                const { uid, email, displayName } = user;
-                dispatch(addUser({ uid: uid, email: email, displayName: displayName }));
+                const { uid, email, displayName,photoURL } = user;
+                dispatch(addUser({ uid: uid, email: email, displayName: displayName ,photoURL: photoURL})); 
                 
             }
             else {

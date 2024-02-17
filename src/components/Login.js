@@ -4,9 +4,13 @@ import {checkValidateDataForSignin , checkValidateDataForSignup,} from "../utils
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../utils/firebase'; 
 import { useNavigate } from 'react-router-dom';
+import { updateProfile } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 // rafce
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isSignInForm, setSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const name = useRef(null);
@@ -43,8 +47,31 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in successfully
           const user = userCredential.user;
+          updateProfile(user, {
+            displayName: nameValue|| user.displayName,
+            photoURL: "https://avatars.githubusercontent.com/u/105166314?v=4",
+          })
+            .then(() => {
+              // Profile updated!
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+              navigate("/browse");
+            })
+            .catch((error) => {
+              // An error occurred
+              const updateErrorCode = error.code;
+              // Display error message to the user
+              setErrorMessage(updateErrorCode);
+            });
           // Proceed with further actions after sign-in
-          navigate("/browse");
+          
         })
         .catch((error) => {
           // Handle errors here
