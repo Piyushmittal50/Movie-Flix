@@ -4,10 +4,16 @@ import { useSelector } from 'react-redux'
 const SecondContainer = () => {
   const movies = useSelector((store) => store.movies);
   return (
-    <div>
+    <div className='bg-black'>
+      <div className='-mt-52 pl-8 relative z-20'>
       <MovieList title={"Now Playing"} movies={movies.nowPlayingMovies} />
+      <MovieList title={"Popular"} movies={movies.popularMovies} />
+      <MovieList title={"Top Rated"} movies={movies.topRatedMovies} />
+      <MovieList title={"Upcoming"} movies={movies.upcomingMovies} />
+      <MovieList title={"Tv Series"} movies={movies.TvSeries} />
+      </div>
     </div>
-  )
+  );
 }
 
 export default SecondContainer;

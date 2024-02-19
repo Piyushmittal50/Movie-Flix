@@ -14,6 +14,17 @@
 - Implemented SignOut Feature
 - Update Profile Api Call
 - Fetch Movies From TMDB
+- create MovieSlice
+- Update Store with Movies Data
+- Planning for mainContainer and secondaryContainer
+- Fetch Data for Trailer video
+- Update store with Trailer video Data
+- Embeded Youtube Video and make it autoplay and mute
+- Build mainContainer
+- Build secondContainer
+- Build MovieList
+- Build MovieCard
+
 
 ## Features
 - Login/Sign Up
