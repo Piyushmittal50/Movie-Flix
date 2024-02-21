@@ -1,24 +1,31 @@
 import React, { useEffect } from 'react'
-import { user_icon } from '../utils/mockData'
 import { useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useNavigate,useLocation} from 'react-router-dom';
 import { auth } from '../utils/firebase';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser, removeUser } from '../utils/userSlice';
-import { netflix_logo } from '../utils/mockData';
+import { SUPPORTED_LANGUAGES, netflix_logo } from '../utils/mockData';
+import { toggleGptSearchView } from '../utils/gptSlice';
+import { changeLanguage } from '../utils/configSlice';
 const Header = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector(store => store.user);
+  const showGptSearch = useSelector(store => store.gpt.showGptSearch);
   const [showDropdown, setShowDropdown] = useState(false);
 
-    const toggleDropdown = () => {
+  const toggleDropdown = () => {
       setShowDropdown(!showDropdown);
-    };
-
+  };
+  const handleLanguageChange = (e) => {
+    dispatch(changeLanguage(e.target.value));
+  };
+  const handleGptSearchClick = () => {
+    dispatch(toggleGptSearchView());
+  };
     const handleSignOut = () => {
       // Implement sign-out logic here
       signOut(auth)
@@ -68,12 +75,27 @@ const Header = () => {
 
   return (
     <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between">
-      <img
-        className="w-44"
-        src={netflix_logo}
-        alt="logo"
-      />
-      <div className="relative">
+      <img className="w-44" src={netflix_logo} alt="logo" />
+
+      <div className="flex">
+        { showGptSearch && (
+          <select
+            className="p-2 m-3 rounded-lg cursor-pointer bg-blue-600 text-white font-semibold px-3"
+            onChange={handleLanguageChange}
+          >
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <option key={lang.identifier} value={lang.identifier}>
+                {lang.name}
+              </option>
+            ))}
+          </select>
+        )}
+        <button
+          className="py-2 px-4 text-white rounded-lg bg-purple-700 my-3 mr-10 font-semibold"
+          onClick={handleGptSearchClick}
+        >
+          {showGptSearch ? "HomePage":"GPT Search"}
+        </button>
         {renderUserIcon()}
         {showDropdown && (
           <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-md shadow-lg bg-white">
