@@ -78,7 +78,7 @@ const Header = () => {
       <img className="w-44" src={netflix_logo} alt="logo" />
 
       <div className="flex">
-        { showGptSearch && (
+        {showGptSearch && (
           <select
             className="p-2 m-3 rounded-lg cursor-pointer bg-blue-600 text-white font-semibold px-3"
             onChange={handleLanguageChange}
@@ -90,12 +90,14 @@ const Header = () => {
             ))}
           </select>
         )}
-        <button
-          className="py-2 px-4 text-white rounded-lg bg-purple-700 my-3 mr-10 font-semibold"
-          onClick={handleGptSearchClick}
-        >
-          {showGptSearch ? "HomePage":"GPT Search"}
-        </button>
+        {user && 
+          <button
+            className="py-2 px-4 text-white rounded-lg bg-purple-700 my-3 mr-10 font-semibold"
+            onClick={handleGptSearchClick}
+          >
+            {showGptSearch ? "HomePage" : "GPT Search"}
+          </button>
+        }
         {renderUserIcon()}
         {showDropdown && (
           <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-md shadow-lg bg-white">
