@@ -24,6 +24,12 @@
 - Build secondContainer
 - Build MovieList
 - Build MovieCard
+- GPT search page
+- GPT search bar
+- Multi Lamguage Feature
+- Memoization
+- Add .env file
+- Responsiveness
 
 
 ## Features

@@ -5,16 +5,15 @@ import { BG_IMG } from '../utils/mockData';
 
 const GptSearchPage = () => {
   return (
-    <div>
+    <>
       <div className="absolute -z-10">
-        <img
-          src={BG_IMG}
-          alt="logo"
-        />
+        <img className="h-screen w-screen object-cover" src={BG_IMG} alt="logo" />
       </div>
-      <GptSearchBar />
-      <GptMovieSugesstion />
-    </div>
+      <div className='pt-[30%] md:pt-[5%]'>
+        <GptSearchBar />
+        <GptMovieSugesstion />
+      </div>
+    </>
   );
 }
 
