@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { options } from '../utils/mockData';
 import { addTvSeries } from '../utils/movieSlice';
 
 const useTvSeries = () => {
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const TvSeries = useSelector(store => store.movies.TvSeries);
    const getTvSeries = async () => {
      const data = await fetch(
        "https://api.themoviedb.org/3/tv/popular?language=en-US&page=1",
@@ -16,8 +17,8 @@ const useTvSeries = () => {
      dispatch(addTvSeries(json.results));
    };
 
-   useEffect(() => {
-     getTvSeries();
+  useEffect(() => {
+     if(!TvSeries) getTvSeries();
    }, []);
 }
 
